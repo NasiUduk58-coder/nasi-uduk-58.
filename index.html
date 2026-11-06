@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FORM PESAN NASI UDUK 58</title>
+  <meta name="viewport"
+  content="width=device-width,initial-scale=1.0">
+  <style>
+  body {
+    background-color: yellow;
+  }
+
+  h1 {
+    color : hwb(0 4% 96%);
+    font-size : 35px;
+    text-align: center;
+  }
+
+  p {
+    color : black;
+    font-size : 15px;
+  }
+
+  h4 {
+    color : hwb(0 4% 95%);
+  }
+
+  button {
+    display: block;
+    width: 200px;
+    margin: 20px auto;
+    padding: 12px;
+    background-color: brown;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background-color: darkred;
+    cursor: pointer;
+  }
+
+  /* ===== FORM PESANAN ===== */
+  .form-pesan {
+    background-color: white;
+    padding: 20px;
+    margin: 20px;
+    border: 2px solid brown;
+    border-radius: 10px;
+    box-shadow: 3px 3px 10px gray;
+  }
+
+  .form-pesan h2 {
+    text-align: center;
+    color: brown;
+  }
+
+  .form-pesan label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+    color: black;
+  }
+
+  .form-pesan input[type="text"],
+  .form-pesan input[type="tel"],
+  .form-pesan textarea,
+  .form-pesan select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid brown;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .baris-menu {
+    border-bottom: 1px dashed brown;
+    padding: 10px 0;
+  }
+
+  .baris-atas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+  }
+
+  .baris-atas input {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid brown;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+
+  /* satu baris = satu porsi */
+  .form-pesan .porsi {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .form-pesan .porsi select {
+    flex: 1;
+    min-width: 110px;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .form-pesan .btn-hapus {
+    width: auto;
+    margin: 0;
+    padding: 9px 12px;
+    font-size: 14px;
+    background-color: darkred;
+  }
+
+  .form-pesan .btn-tambah {
+    width: auto;
+    margin: 10px 0 0 0;
+    padding: 9px 14px;
+    font-size: 14px;
+  }
+
+  .total-bayar {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: brown;
+    text-align: right;
+  }
+
+  .pesan-error {
+    color: darkred;
+    font-weight: bold;
+    min-height: 20px;
+  }
+  </style>
+</head>
+
+<body>
+<h1>RESTAURANT<br>NASI UDUK 58</h1>
+<p>Selamat Datang di Nasi Uduk 58 <br>
+Kami telah menyediakan nasi uduk dengan berbagai aneka pilihan lauk yang lezat dan harga terjangkau.</p>
+
+<div class="form-pesan" id="form-pesan">
+    <h2>FORM PESANAN</h2>
+
+    <form id="formPesanan">
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" placeholder="Masukkan nama kamu">
+
+        <label for="hp">Nomor HP</label>
+        <input type="tel" id="hp" placeholder="08xxxxxxxxxx">
+
+        <label>Pilih Menu</label>
+        <div id="daftarMenu"></div>
+
+        <label for="cara">Cara Terima Pesanan</label>
+        <select id="cara">
+            <option value="Diantar">Diantar</option>
+            <option value="Ambil sendiri">Ambil sendiri</option>
+        </select>
+
+        <div id="boxAlamat">
+            <label for="alamat">Alamat Pengantaran</label>
+            <textarea id="alamat" rows="3" placeholder="Tulis alamat lengkap"></textarea>
+        </div>
+
+        <label for="catatan">Catatan (boleh dikosongkan)</label>
+        <input type="text" id="catatan" placeholder="Contoh: sambalnya dipisah">
+
+        <p class="total-bayar">Total: <span id="total">Rp0</span></p>
+        <p class="pesan-error" id="pesanError"></p>
+
+        <button type="submit">Kirim Pesanan</button>
+    </form>
+</div>
+
+<h4>JAM OPERASIONAL</h4>
+<p>Senin - Sabtu<br>10.00 sd 19.00 WIB
+</p>
+
+<p>Terima kasih telah mengunjungi tempat makanan nasi uduk 58.</p>
+
+<a
+href="https://wa.me/6285777904153?text=Hallo%2C%20saya%20ingin%20memesan%20Nasi%20Uduk%2058">
+  <button>Pesan Disini</button>
+</a>
+
+<script>
+var NOMOR_WA = "6285777904153";
+
+/* Daftar menu. Ubah nama/harga di sini.
+   - pilihan kosong []  -> pakai kolom jumlah
+   - pilihan ada isinya -> pakai tombol "+ Tambah porsi", tiap porsi
+     punya dropdown sendiri. Tiap dropdown ditulis sebagai [ ... ] */
+var MENU = [
+    { nama: "Nasi Uduk", harga: 7000, pilihan: [] },
+    { nama: "Nasi + Ikan", harga: 20000, pilihan: [
+        ["Nasi Uduk", "Nasi Biasa"],
+        ["Nila", "Mujaer", "Lele"]
+    ] },
+    { nama: "Nasi + Ayam", harga: 23000, pilihan: [
+        ["Nasi Uduk", "Nasi Biasa"],
+        ["Paha", "Dada"]
+    ] },
+    { nama: "Gorengan Jeroan", harga: 3000, pilihan: [
+        ["Usus", "Kulit", "Ceker"]
+    ] },
+    { nama: "Kepala Ayam", harga: 5000, pilihan: [] },
+    { nama: "Gorengan Tempe/Tahu", harga: 2000, pilihan: [
+        ["Tempe", "Tahu"]
+    ] }
+];
+
+function rupiah(angka) {
+    return "Rp" + angka.toLocaleString("id-ID");
+}
+
+/* Membuat daftar menu otomatis */
+var kotak = document.getElementById("daftarMenu");
+var htmlMenu = "";
+for (var i = 0; i < MENU.length; i++) {
+    var m = MENU[i];
+    htmlMenu += '<div class="baris-menu">';
+    htmlMenu += '<div class="baris-atas"><span>' + m.nama + ' (' + rupiah(m.harga) + ')</span>';
+    if (m.pilihan.length === 0) {
+        htmlMenu += '<input type="number" min="0" value="0" id="jml' + i + '">';
+    }
+    htmlMenu += '</div>';
+    if (m.pilihan.length > 0) {
+        htmlMenu += '<div id="porsi' + i + '"></div>';
+        htmlMenu += '<button type="button" class="btn-tambah" data-i="' + i + '">+ Tambah porsi</button>';
+    }
+    htmlMenu += '</div>';
+}
+kotak.innerHTML = htmlMenu;
+
+/* Menambah satu baris porsi (dropdown sendiri-sendiri) */
+function tambahPorsi(i) {
+    var baris = document.createElement("div");
+    baris.className = "porsi";
+    var html = "";
+    for (var k = 0; k < MENU[i].pilihan.length; k++) {
+        html += '<select>';
+        for (var j = 0; j < MENU[i].pilihan[k].length; j++) {
+            html += '<option value="' + MENU[i].pilihan[k][j] + '">' + MENU[i].pilihan[k][j] + '</option>';
+        }
+        html += '</select>';
+    }
+    html += '<button type="button" class="btn-hapus">Hapus</button>';
+    baris.innerHTML = html;
+    document.getElementById("porsi" + i).appendChild(baris);
+}
+
+/* Jumlah porsi sebuah menu */
+function jumlahMenu(i) {
+    if (MENU[i].pilihan.length > 0) {
+        return document.querySelectorAll("#porsi" + i + " .porsi").length;
+    }
+    var n = parseInt(document.getElementById("jml" + i).value);
+    if (isNaN(n) || n < 0) {
+        n = 0;
+    }
+    return n;
+}
+
+function hitungTotal() {
+    var total = 0;
+    for (var i = 0; i < MENU.length; i++) {
+        total += jumlahMenu(i) * MENU[i].harga;
+    }
+    document.getElementById("total").textContent = rupiah(total);
+    return total;
+}
+
+kotak.addEventListener("input", hitungTotal);
+
+kotak.addEventListener("click", function (e) {
+    if (e.target.classList.contains("btn-tambah")) {
+        tambahPorsi(parseInt(e.target.getAttribute("data-i")));
+        hitungTotal();
+    }
+    if (e.target.classList.contains("btn-hapus")) {
+        e.target.parentNode.remove();
+        hitungTotal();
+    }
+});
+
+document.getElementById("cara").addEventListener("change", function () {
+    var antar = this.value === "Diantar";
+    document.getElementById("boxAlamat").style.display = antar ? "block" : "none";
+});
+
+document.getElementById("formPesanan").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var nama = document.getElementById("nama").value.trim();
+    var hp = document.getElementById("hp").value.trim();
+    var cara = document.getElementById("cara").value;
+    var alamat = document.getElementById("alamat").value.trim();
+    var catatan = document.getElementById("catatan").value.trim();
+    var total = hitungTotal();
+    var error = document.getElementById("pesanError");
+
+    var baris = [];
+    for (var i = 0; i < MENU.length; i++) {
+        if (MENU[i].pilihan.length === 0) {
+            var jml = jumlahMenu(i);
+            if (jml > 0) {
+                baris.push(jml + "x " + MENU[i].nama);
+            }
+        } else {
+            /* kelompokkan porsi yang pilihannya sama */
+            var daftar = document.querySelectorAll("#porsi" + i + " .porsi");
+            var hitung = {};
+            var urutan = [];
+            for (var p = 0; p < daftar.length; p++) {
+                var sel = daftar[p].querySelectorAll("select");
+                var nilai = [];
+                for (var s = 0; s < sel.length; s++) {
+                    nilai.push(sel[s].value);
+                }
+                var kunci = nilai.join(", ");
+                if (!hitung[kunci]) {
+                    hitung[kunci] = 0;
+                    urutan.push(kunci);
+                }
+                hitung[kunci]++;
+            }
+            for (var u = 0; u < urutan.length; u++) {
+                baris.push(hitung[urutan[u]] + "x " + MENU[i].nama + " (" + urutan[u] + ")");
+            }
+        }
+    }
+
+    if (baris.length === 0) {
+        error.textContent = "Pilih minimal satu menu.";
+        return;
+    }
+    if (nama === "") {
+        error.textContent = "Nama belum diisi.";
+        return;
+    }
+    if (hp === "") {
+        error.textContent = "Nomor HP belum diisi.";
+        return;
+    }
+    if (cara === "Diantar" && alamat === "") {
+        error.textContent = "Alamat pengantaran belum diisi.";
+        return;
+    }
+    error.textContent = "";
+
+    var pesan = "Halo, saya mau pesan Nasi Uduk 58\n\n";
+    pesan += baris.join("\n");
+    pesan += "\n\nTotal: " + rupiah(total);
+    pesan += "\nNama: " + nama;
+    pesan += "\nHP: " + hp;
+    pesan += "\nPenerimaan: " + cara;
+    if (cara === "Diantar") {
+        pesan += "\nAlamat: " + alamat;
+    }
+    if (catatan !== "") {
+        pesan += "\nCatatan: " + catatan;
+    }
+
+    window.open("https://wa.me/" + NOMOR_WA + "?text=" + encodeURIComponent(pesan), "_blank");
+});
+</script>
+
+</body>
+</html>
